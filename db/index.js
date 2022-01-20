@@ -6,7 +6,7 @@ const uuid = require('uuid/v1')
 const readAsync = util.promisify(fs.readFile);
 const writeAsync = util.promisify(fs.writeFile);
 
-// class for funtions to read and write to the db.json file
+// class for funtions to read, write, and delete notes
 class DB {
     read() {
         return readAsync('db/db.json', 'utf-8')
@@ -46,6 +46,13 @@ class DB {
                 return allNotes;
             });
     };
+    deleteNote(id) {
+        return this.readNotes()
+            // filter out note to be deleted by id
+            .then(notes => notes.filter(note => note.id !== id))
+            // update the file with new array
+            .then(newNotesArr => this.write(newNotesArr));
+    }
 };
 
 module.exports = new DB();
